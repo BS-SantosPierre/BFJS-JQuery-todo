@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Document</title>
+	<link rel="preconnect" href="https://rsms.me/">
+	<link rel="stylesheet" href="https://rsms.me/inter/inter.css">
+	<link rel="stylesheet" href="./css/style.css">
+</head>
+<body>
+	<main>
+		<h1>Todo List</h1>
+		<form name="myForm">
+			<div>
+				<div>
+					<input type="text" id="todo" name="todo" placeholder="grab tea at the grocery store">
+					<button class="btn">Add</button>
+				</div>
+			</div>
+		</form>
+		<ul id="todo-list"></ul>
+		<div id="dialog-wrapper">
+			<div id="dialog">
+				<p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Quasi, sequi.</p>
+				<div>
+					<button class="btn btn-dismiss">Dismiss</button>
+					<button class="btn btn-confirm">Confirm</button>
+				</div>
+			</div>
+		</div>
+	</main>
+
+	<script src="./scripts/jquery.js"></script>
+	<script>
+		$(document).ready(() => {
+            // Cache le dialog
+			$('#dialog-wrapper').hide();
+            $(document.forms['myForm']).submit((event) => {
+                event.preventDefault(); // retirer le comportement par défaut de notre formulaire
+                const input = $('#todo');
+                if (input.val().trim()) {
+                    // Ajouter la nouvelle todo à ma liste
+                    $('#todo-list').append(`
+                        <li>${input.val().trim()}
+                            <button data-action="DONE" type="button" class="btn-action">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="icon">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+                                </svg>
+                            </button>
+                            <button data-action="DELETE" type="button" class="btn-action">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="icon">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
+                                </svg>
+                            </button>  
+                        </li>
+                    `);
+                    input.val('');
+                }
+            });
+            // logique des bouton dans ma todo list
+            $('#todo-list').on('click', 'button', function (event) {
+                const current = $(this);
+                if (current.data('action') === 'DONE') {
+                    // Changer la couleur de ma todo
+                    current.parent().css('color', 'green');
+                } else if(current.data('action') === 'DELETE') {
+                    // Afficher le dialog
+                    $('#dialog-wrapper').fadeIn(300);
+                    $('#dialog p').text("Etes vous sur de vouloir supprimer la todo ?");
+                    $('#dialog .btn-confirm').data('todo', current.parent());
+                }
+            });
+
+            // Logique Bouton dialog
+            $('#dialog .btn-confirm').click(function () {
+                $(this).data('todo').remove(); // Retire la todo
+                $(this).removeData(); // Retire les data
+                $('#dialog-wrapper').fadeOut(300);
+            })
+
+            $('#dialog .btn-dismiss').click(function () {
+                $('#dialog-wrapper').fadeOut(300);
+            })
+		});
+	</script>
+</body>
+</html>
